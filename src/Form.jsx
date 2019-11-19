@@ -21,6 +21,7 @@ class Form extends React.Component {
 
   handleAgeChange(e) {
     const value = parseInt(e.target.value, 10);
+    // eslint-disable-next-line no-console
     console.log(value);
     if (Number.isInteger(value)) {
       this.setState({ age: value });
@@ -37,7 +38,18 @@ class Form extends React.Component {
             <input id="name" type="text" className="form-control" placeholder="Parent name" />
           </div>
           <div className="form-group">
-            <input id="email" type="phone" className="form-control" placeholder="Parent phone" />
+            {
+              // chrome - pattern does not work !!
+            }
+            <input
+              id="phone"
+              type="tel"
+              pattern="[0-9]{9}"
+              className="form-control"
+              placeholder="Parent phone"
+              title="Phone number should only contain 9 digits"
+              required="required"
+            />
           </div>
         </div>
       );
@@ -50,7 +62,13 @@ class Form extends React.Component {
             <input id="name" type="text" className="form-control" placeholder="Name" />
           </div>
           <div className="form-group">
-            <input id="email" type="email" className="form-control" placeholder="E-mail" />
+            <input
+              id="email"
+              type="email"
+              className="form-control"
+              placeholder="E-mail"
+              required="required"
+            />
           </div>
         </div>
       );
