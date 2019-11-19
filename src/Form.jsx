@@ -8,15 +8,22 @@ class Form extends React.Component {
     this.state = {
       age: 20,
       isSaving: false,
-      error: ""
+      currentNameValue: "",
+      currentInputValue: "",
+      validationError: "",
+      isValid: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleAgeChange = this.handleAgeChange.bind(this);
+    this.validateEmail = this.validateEmail.bind(this);
+    this.validatePhone = this.validatePhone.bind(this);
+    this.validate = this.validate.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
+    this.props.history.push("/success");
   }
 
   handleAgeChange(e) {
@@ -24,23 +31,72 @@ class Form extends React.Component {
     // eslint-disable-next-line no-console
     console.log(value);
     if (Number.isInteger(value)) {
-      this.setState({ age: value });
+      this.setState({
+        age: value,
+        currentNameValue: "",
+        currentInputValue: "",
+        validationError: "",
+        isValid: false
+      });
     }
   }
 
+  validateEmail(e) {
+    this.validate(
+      e.target.value,
+      /^([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)+@[a-zA-Z0-9]+(\.[A-Za-z]+)+$/,
+      "Input should be valid e-mail"
+    );
+  }
+
+  validatePhone(e) {
+    this.validate(
+      e.target.value,
+      /^[0-9]{9}$/,
+      "Input should be valid phone, containing only 9 digits"
+    );
+  }
+
+  validate(value, pattern, msg) {
+    let valError = "";
+    let valid = true;
+    const pat = new RegExp(pattern);
+    if (!pat.test(value)) {
+      valError = msg;
+      valid = false;
+    }
+
+    this.setState({
+      validationError: valError,
+      isValid: valid,
+      currentInputValue: value
+    });
+  }
+
   render() {
-    const { age, isSaving, error } = this.state;
+    const {
+      age,
+      isSaving,
+      currentNameValue,
+      currentInputValue,
+      validationError,
+      isValid
+    } = this.state;
 
     const child = () => {
       return (
         <div>
           <div className="form-group">
-            <input id="name" type="text" className="form-control" placeholder="Parent name" />
+            <input
+              id="name"
+              type="text"
+              className="form-control"
+              placeholder="Parent name"
+              value={currentNameValue}
+              onChange={e => this.setState({ currentNameValue: e.target.value })}
+            />
           </div>
           <div className="form-group">
-            {
-              // chrome - pattern does not work !!
-            }
             <input
               id="phone"
               type="tel"
@@ -48,8 +104,11 @@ class Form extends React.Component {
               className="form-control"
               placeholder="Parent phone"
               title="Phone number should only contain 9 digits"
+              onChange={this.validatePhone}
+              value={currentInputValue}
               required="required"
             />
+            <span className="text-danger">{validationError}</span>
           </div>
         </div>
       );
@@ -59,7 +118,14 @@ class Form extends React.Component {
       return (
         <div>
           <div className="form-group">
-            <input id="name" type="text" className="form-control" placeholder="Name" />
+            <input
+              id="name"
+              type="text"
+              className="form-control"
+              placeholder="Name"
+              value={currentNameValue}
+              onChange={e => this.setState({ currentNameValue: e.target.value })}
+            />
           </div>
           <div className="form-group">
             <input
@@ -67,16 +133,15 @@ class Form extends React.Component {
               type="email"
               className="form-control"
               placeholder="E-mail"
+              onChange={this.validateEmail}
+              value={currentInputValue}
               required="required"
             />
+            <span className="text-danger">{validationError}</span>
           </div>
         </div>
       );
     };
-
-    if (error) {
-      return <p>{error}</p>;
-    }
 
     if (isSaving) {
       return (
@@ -98,13 +163,18 @@ class Form extends React.Component {
               type="number"
               className="form-control"
               placeholder="Age"
+              required="required"
             />
           </div>
 
-          {age < 18 ? child() : parent()}
+          {age < 18 ? child("") : parent("")}
 
           <div className="list-group">
-            <button type="submit" className="btn btn-primary m-1">
+            <button
+              type="submit"
+              className="btn btn-primary m-1"
+              disabled={isValid ? "" : "disabled"}
+            >
               Submit
             </button>
             <button
