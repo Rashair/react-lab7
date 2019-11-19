@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from "react";
 
@@ -40,9 +41,11 @@ class EmployeeRow extends React.Component {
     }
 
     return (
-      <div key={employee._id} className="row">
-        {employee.name} {employee.company} {employee.email} {employee.isActive.toString()}{" "}
-        {employee.age}
+      <div
+        key={employee._id}
+        className={"row " + (employee.isActive === true ? "text-primary" : "text-danger")}
+      >
+        {employee.name}, age: {employee.age}
         <button
           type="button"
           className="btn btn-secondary offset-1"
