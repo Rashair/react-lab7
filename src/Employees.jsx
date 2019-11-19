@@ -51,15 +51,8 @@ class Employees extends React.Component {
     return (
       <div className="list-group">
         {employees.map(employee => (
-          <EmployeeRow key={employee._id} employeeData={employee} refresh={this.refreshPage} />
+          <EmployeeRow key={employee._id} employeeData={employee} />
         ))}
-        <button
-          type="button"
-          onClick={() => this.props.history.push("/AddEmployee")}
-          className="btn btn-primary mt-2"
-        >
-          Add employee
-        </button>
       </div>
     );
   }
